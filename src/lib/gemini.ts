@@ -2,8 +2,8 @@
  * Google Gemini API integration for content generation
  */
 
-const GEMINI_API_KEY = 'AIzaSyBBFyqGFV-WGgUZim9crNCESPzFe-jIQSs';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+const GEMINI_API_KEY = 'AIzaSyDhxnKMsP3oS0tG2sYOGZguBEQ5PA8UmXQ';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 interface GeminiResponse {
   candidates: {
