@@ -1,21 +1,23 @@
 /**
- * OpenAI integration for content generation
+ * Google Gemini API integration for content generation
  */
 
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+const GEMINI_API_KEY = 'AIzaSyBBFyqGFV-WGgUZim9crNCESPzFe-jIQSs';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
-interface OpenAIResponse {
-  choices: {
-    message: {
-      content: string;
+interface GeminiResponse {
+  candidates: {
+    content: {
+      parts: {
+        text: string;
+      }[];
     };
   }[];
 }
 
 export async function generateContent(prompt: string, type: 'article' | 'brief'): Promise<string> {
-  if (!OPENAI_API_KEY) {
-    console.warn('OpenAI API key not found, using placeholder content');
+  if (!GEMINI_API_KEY) {
+    console.warn('Gemini API key not found, using placeholder content');
     return getPlaceholderContent(prompt, type);
   }
 
@@ -28,55 +30,53 @@ export async function generateContent(prompt: string, type: 'article' | 'brief')
       ? `Write a comprehensive, SEO-optimized article about: ${prompt}. Include proper HTML structure with headings, paragraphs, and lists. Make it engaging and informative.`
       : `Create a detailed content brief for: ${prompt}. Include target audience, outline, key points, tone, and SEO recommendations.`;
 
-    const response = await fetch(OPENAI_API_URL, {
+    const requestBody = {
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `${systemPrompt}\n\n${userPrompt}`
+            }
+          ]
+        }
+      ]
+    };
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`,
       },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: userPrompt
-          }
-        ],
-        max_tokens: type === 'article' ? 2500 : 1000,
-        temperature: 0.7,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
       if (response.status === 429) {
-        throw new Error('OpenAI API rate limit exceeded. Please wait a few minutes before trying again.');
+        throw new Error('Gemini API rate limit exceeded. Please wait a few minutes before trying again.');
       }
       if (response.status === 401) {
-        throw new Error('Invalid OpenAI API key. Please check your configuration.');
+        throw new Error('Invalid Gemini API key. Please check your configuration.');
       }
-      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
     }
 
-    const data: OpenAIResponse = await response.json();
-    const content = data.choices[0]?.message?.content;
+    const data: GeminiResponse = await response.json();
+    const content = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!content) {
-      throw new Error('No content generated from OpenAI');
+      throw new Error('No content generated from Gemini');
     }
 
     return content;
   } catch (error) {
-    console.error('Error generating content with OpenAI:', error);
+    console.error('Error generating content with Gemini:', error);
     
     // Re-throw specific errors
     if (error instanceof Error && (
       error.message.includes('rate limit') || 
       error.message.includes('API key') ||
-      error.message.includes('OpenAI API error')
+      error.message.includes('Gemini API error')
     )) {
       throw error;
     }

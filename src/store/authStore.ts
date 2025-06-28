@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { User } from '@supabase/supabase-js';
-import { supabase, getUserProfile, signUp as supabaseSignUp, signIn as supabaseSignIn, incrementUsageCount } from '../lib/supabase';
-import type { User as UserProfile } from '../lib/supabase';
+import { User } from 'firebase/auth';
+import { auth, getUserProfile, signUp as firebaseSignUp, signIn as firebaseSignIn, signOut as firebaseSignOut, incrementUsageCount, onAuthStateChange } from '../lib/firebase';
+import type { UserProfile } from '../lib/firebase';
 
 interface AuthState {
   user: User | null;
@@ -26,10 +26,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true });
     
     try {
-      const { data, error } = await supabaseSignIn(email, password);
+      const { data, error } = await firebaseSignIn(email, password);
       
       if (!error && data.user) {
-        // Wait a moment for any database triggers to complete
+        // Wait a moment for any database operations to complete
         await new Promise(resolve => setTimeout(resolve, 500));
         
         const { data: profile } = await getUserProfile();
@@ -49,11 +49,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true });
     
     try {
-      const { data, error } = await supabaseSignUp(email, password, fullName);
+      const { data, error } = await firebaseSignUp(email, password, fullName);
       
       if (!error && data.user) {
-        // Wait for the user profile to be created by the database trigger
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait for the user profile to be created
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Fetch the newly created user profile
         const { data: profile } = await getUserProfile();
@@ -71,28 +71,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     set({ loading: true });
-    await supabase.auth.signOut();
+    await firebaseSignOut();
     set({ user: null, userProfile: null, loading: false });
   },
 
   initialize: async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const { data: profile } = await getUserProfile();
-        set({ user, userProfile: profile });
-      }
-      
-      set({ initialized: true });
-
       // Listen for auth changes
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
+      onAuthStateChange(async (user) => {
+        if (user) {
           const { data: profile } = await getUserProfile();
-          set({ user: session.user, userProfile: profile });
+          set({ user, userProfile: profile });
         } else {
           set({ user: null, userProfile: null });
+        }
+        
+        if (!get().initialized) {
+          set({ initialized: true });
         }
       });
     } catch (error) {

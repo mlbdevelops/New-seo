@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, FileText, Wand2, Target, Users, Lightbulb, Download, Save } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
-import { generateContent } from '../../lib/openai';
+import { generateContent } from '../../lib/gemini';
 import { useNotification } from '../../hooks/useNotification';
 
 interface ContentBrief {
@@ -96,9 +96,9 @@ const ContentBriefGenerator: React.FC = () => {
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('rate limit')) {
-          showNotification('OpenAI API rate limit exceeded. Please wait a few minutes before trying again.', 'error');
+          showNotification('Gemini API rate limit exceeded. Please wait a few minutes before trying again.', 'error');
         } else if (error.message.includes('API key')) {
-          showNotification('OpenAI API configuration error. Please check your settings.', 'error');
+          showNotification('Gemini API configuration error. Please check your settings.', 'error');
         } else {
           showNotification(error.message || 'Failed to generate content brief', 'error');
         }

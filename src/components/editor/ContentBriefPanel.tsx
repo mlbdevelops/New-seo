@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, FileText, Wand2, Target, Users, Lightbulb } from 'lucide-react';
-import { generateContent } from '../../lib/openai';
+import { generateContent } from '../../lib/gemini';
 import { useNotification } from '../../hooks/useNotification';
 
 interface ContentBriefPanelProps {

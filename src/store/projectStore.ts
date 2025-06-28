@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { getUserProjects, createProject as createProjectAPI, getProjectArticles } from '../lib/supabase';
-import type { Project, Article } from '../lib/supabase';
+import { getUserProjects, createProject as createProjectAPI, getProjectArticles } from '../lib/firebase';
+import type { Project, Article } from '../lib/firebase';
 
 interface ProjectState {
   projects: Project[];

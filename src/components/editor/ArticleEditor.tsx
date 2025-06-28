@@ -5,8 +5,8 @@ import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useProjectStore } from '../../store/projectStore';
 import { useAuthStore } from '../../store/authStore';
-import { generateContent } from '../../lib/openai';
-import { createArticle, updateArticle, canUserEditProject } from '../../lib/supabase';
+import { generateContent } from '../../lib/gemini';
+import { createArticle, updateArticle, canUserEditProject } from '../../lib/firebase';
 import { useNotification } from '../../hooks/useNotification';
 import SEOPanel from './SEOPanel';
 import ContentBriefPanel from './ContentBriefPanel';
@@ -92,9 +92,9 @@ const ArticleEditor: React.FC = () => {
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('rate limit')) {
-          showNotification('OpenAI API rate limit exceeded. Please wait a few minutes before trying again.', 'error');
+          showNotification('Gemini API rate limit exceeded. Please wait a few minutes before trying again.', 'error');
         } else if (error.message.includes('API key')) {
-          showNotification('OpenAI API configuration error. Please check your settings.', 'error');
+          showNotification('Gemini API configuration error. Please check your settings.', 'error');
         } else {
           showNotification(error.message || 'Failed to generate content. Please try again.', 'error');
         }

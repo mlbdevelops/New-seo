@@ -8,8 +8,8 @@ import {
   updateComment, 
   resolveComment, 
   deleteComment 
-} from '../../lib/supabase';
-import type { ArticleComment } from '../../lib/supabase';
+} from '../../lib/firebase';
+import type { ArticleComment } from '../../lib/firebase';
 
 interface CommentsPanelProps {
   isOpen: boolean;
@@ -126,8 +126,8 @@ const CommentsPanel: React.FC<CommentsPanelProps> = ({ isOpen, onClose, articleI
     setEditContent('');
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('en-US', {
+  const formatDate = (date: Date) => {
+    return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',

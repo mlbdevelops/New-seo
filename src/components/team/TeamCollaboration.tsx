@@ -12,8 +12,8 @@ import {
   getProjectActivity,
   getUserProjectRole,
   canUserManageTeam
-} from '../../lib/supabase';
-import type { TeamMember, ProjectInvitation, ActivityLog } from '../../lib/supabase';
+} from '../../lib/firebase';
+import type { TeamMember, ProjectInvitation, ActivityLog } from '../../lib/firebase';
 
 const TeamCollaboration: React.FC = () => {
   const { user, userProfile } = useAuthStore();
@@ -399,7 +399,7 @@ const TeamCollaboration: React.FC = () => {
                             <div>
                               <h4 className="font-medium text-gray-900">{invitation.email}</h4>
                               <p className="text-sm text-gray-600">
-                                Invited as {invitation.role} • Expires {new Date(invitation.expires_at).toLocaleDateString()}
+                                Invited as {invitation.role} • Expires {invitation.expires_at.toLocaleDateString()}
                               </p>
                             </div>
                             
@@ -446,7 +446,7 @@ const TeamCollaboration: React.FC = () => {
                                 {formatActivityAction(activity)}
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
-                                {new Date(activity.created_at).toLocaleString()}
+                                {activity.created_at.toLocaleString()}
                               </p>
                             </div>
                           </div>
