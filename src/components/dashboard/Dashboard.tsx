@@ -89,19 +89,19 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center h-auto sm:h-16 py-4 sm:py-0">
+            <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 SeoForge
               </h1>
               <div className="hidden sm:block">
-                <span className="text-gray-600">Welcome back, {userProfile?.full_name || user?.email}</span>
+                <span className="text-sm sm:text-base text-gray-600">Welcome back, {userProfile?.full_name || user?.email}</span>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-purple-100 px-3 py-1 rounded-full">
-                <span className="text-sm font-medium text-purple-700">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center space-x-2 bg-purple-100 px-2 sm:px-3 py-1 rounded-full">
+                <span className="text-xs sm:text-sm font-medium text-purple-700">
                   {userProfile?.subscription_tier === 'pro' ? 'Pro' : 'Free'}
                 </span>
               </div>
@@ -109,50 +109,50 @@ const Dashboard: React.FC = () => {
                 onClick={() => handleNavigation('settings')}
                 className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <Settings className="w-5 h-5" />
+                <Settings className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <button
                 onClick={handleSignOut}
                 className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {stats.map((stat, index) => (
             <StatsCard key={index} {...stat} />
           ))}
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
-            <p className="text-gray-600 mt-1">Get started with these popular features</p>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 sm:mb-8">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Quick Actions</h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Get started with these popular features</p>
           </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {quickActions.map((action, index) => {
                 const Icon = action.icon;
                 return (
                   <button
                     key={index}
                     onClick={action.action}
-                    className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 text-left group"
+                    className="p-3 sm:p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 text-left group"
                   >
-                    <div className={`inline-flex p-2 rounded-lg bg-gradient-to-r ${action.color} mb-3`}>
-                      <Icon className="w-5 h-5 text-white" />
+                    <div className={`inline-flex p-2 rounded-lg bg-gradient-to-r ${action.color} mb-2 sm:mb-3`}>
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     </div>
-                    <h3 className="font-medium text-gray-900 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-900 group-hover:text-purple-600 transition-colors">
                       {action.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mt-1">{action.description}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 mt-1">{action.description}</p>
                   </button>
                 );
               })}
@@ -162,15 +162,15 @@ const Dashboard: React.FC = () => {
 
         {/* Projects Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Your Projects</h2>
-                <p className="text-gray-600 mt-1">Manage your content projects and articles</p>
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div className="mb-4 sm:mb-0">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Your Projects</h2>
+                <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your content projects and articles</p>
               </div>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2"
+                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center space-x-2"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Project</span>
@@ -178,7 +178,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {loading ? (
               <div className="flex justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
@@ -196,7 +196,7 @@ const Dashboard: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {projects.map((project) => (
                   <ProjectCard key={project.id} project={project} />
                 ))}

@@ -43,19 +43,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 group relative">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 group relative">
       <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors truncate">
             {project.title}
           </h3>
           {project.description && (
-            <p className="text-gray-600 text-sm line-clamp-2">
+            <p className="text-sm text-gray-600 line-clamp-2">
               {project.description}
             </p>
           )}
         </div>
-        <div className="relative">
+        <div className="relative ml-2 flex-shrink-0">
           <button 
             onClick={() => setShowMenu(!showMenu)}
             className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
@@ -101,7 +101,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm text-gray-500 mb-4 space-y-2 sm:space-y-0">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1">
             <FileText className="w-4 h-4" />
@@ -109,12 +109,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           </div>
           <div className="flex items-center space-x-1">
             <Calendar className="w-4 h-4" />
-            <span>{formatDate(project.created_at)}</span>
+            <span className="hidden sm:inline">{formatDate(project.created_at)}</span>
+            <span className="sm:hidden">{new Date(project.created_at).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
 
-      <div className="flex space-x-2">
+      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
         <button
           onClick={handleOpenProject}
           className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 text-sm"
@@ -123,10 +124,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         </button>
         <button 
           onClick={handleManageTeam}
-          className="p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
+          className="sm:w-auto w-full p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors flex items-center justify-center"
           title="Manage Team"
         >
           <Users className="w-4 h-4" />
+          <span className="ml-2 sm:hidden">Manage Team</span>
         </button>
       </div>
 

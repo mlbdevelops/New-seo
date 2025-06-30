@@ -163,8 +163,8 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center h-auto sm:h-16 py-4 sm:py-0">
+            <div className="flex items-center space-x-4 mb-4 sm:mb-0">
               <button
                 onClick={handleBack}
                 className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
@@ -173,15 +173,15 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
               </button>
               <div>
                 <h1 className="text-lg font-semibold text-gray-900">Content Brief Generator</h1>
-                <p className="text-sm text-gray-600">Create detailed content briefs with AI</p>
+                <p className="text-sm text-gray-600 hidden sm:block">Create detailed content briefs with AI</p>
               </div>
             </div>
             
             {brief && (
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                 <button
                   onClick={handleExport}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
                 >
                   <Download className="w-4 h-4" />
                   <span>Export</span>
@@ -189,7 +189,7 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   <Save className="w-4 h-4" />
                   <span>{isSaving ? 'Saving...' : 'Save'}</span>
@@ -200,18 +200,18 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Usage Indicator */}
         {userProfile && (
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex justify-between items-center">
+          <div className="mb-6 sm:mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
               <div>
                 <h3 className="font-medium text-blue-900">AI Usage</h3>
                 <p className="text-sm text-blue-700">
                   {userProfile.usage_count} of {userProfile.usage_limit} AI generations used this month
                 </p>
               </div>
-              <div className="w-32 bg-blue-200 rounded-full h-2">
+              <div className="w-full sm:w-32 bg-blue-200 rounded-full h-2">
                 <div 
                   className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${Math.min((userProfile.usage_count / userProfile.usage_limit) * 100, 100)}%` }}
@@ -222,11 +222,11 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
         )}
 
         {/* Input Form */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Generate Content Brief</h2>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Topic *
               </label>
@@ -269,7 +269,7 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
               </select>
             </div>
             
-            <div className="flex items-end">
+            <div className="md:col-span-2">
               <button
                 onClick={generateBrief}
                 disabled={isGenerating || !userProfile || userProfile.usage_count >= userProfile.usage_limit}
@@ -284,7 +284,7 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
 
         {/* Generated Brief */}
         {isGenerating ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-12">
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
               <span className="ml-3 text-gray-600">Generating your content brief...</span>
@@ -293,13 +293,13 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
         ) : brief ? (
           <div className="space-y-6">
             {/* Title */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">{brief.title}</h3>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{brief.title}</h3>
               <p className="text-gray-600">Content Type: {contentType.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
             </div>
 
             {/* Target Audience */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                 <Users className="w-5 h-5 text-blue-500 mr-2" />
                 Target Audience
@@ -308,7 +308,7 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
             </div>
 
             {/* Content Outline */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                 <Target className="w-5 h-5 text-green-500 mr-2" />
                 Content Outline
@@ -326,7 +326,7 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
             </div>
 
             {/* Key Points */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                 <Lightbulb className="w-5 h-5 text-yellow-500 mr-2" />
                 Key Points to Cover
@@ -342,22 +342,22 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
             </div>
 
             {/* Writing Guidelines */}
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <h5 className="font-semibold text-purple-900 mb-2">Tone & Style</h5>
                 <p className="text-purple-700">{brief.tone}</p>
               </div>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <h5 className="font-semibold text-indigo-900 mb-2">Word Count</h5>
                 <p className="text-indigo-700">{brief.wordCount}</p>
               </div>
             </div>
 
             {/* SEO Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-4">SEO Optimization</h4>
               
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h5 className="font-semibold text-gray-900 mb-2">Target Keywords</h5>
                   <div className="flex flex-wrap gap-2">
@@ -387,7 +387,7 @@ ${brief.seoTips.map(tip => `• ${tip}`).join('\n')}
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-12">
             <div className="text-center">
               <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">Generate Your Content Brief</h3>
