@@ -1,1 +1,3 @@
-google-site-verification=JFdHUNVbthFXZjnOmgJvKQp6KP4f05YyMYlsZMnq3mg
+User-agent: *
+Allow: /
+Sitemap: https://seoforge.vercel.app/sitemap.xml
