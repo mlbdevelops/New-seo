@@ -2,4 +2,4 @@
 
 **Ai powered seo content optimizer.**
 
-#### by cortexware .Inc
+### by cortexware .Inc
