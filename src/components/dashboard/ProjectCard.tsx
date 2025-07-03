@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import { Calendar, FileText, MoreVertical, Edit, Trash2, Users, Settings } from 'lucide-react';
 import { useProjectStore } from '../../store/projectStore';
 import { useNotification } from '../../hooks/useNotification';
-import type { Project } from '../../lib/supabase';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import type { Project } from '../../lib/firebase';
 
 interface ProjectCardProps {
   project: Project;
+  onProjectDeleted?: () => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onProjectDeleted }) => {
   const { setCurrentProject } = useProjectStore();
   const { showNotification } = useNotification();
   const [showMenu, setShowMenu] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleOpenProject = () => {
     setCurrentProject(project);
@@ -27,10 +31,28 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     showNotification('Edit project feature coming soon!', 'info');
   };
 
-  const handleDeleteProject = () => {
-    if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-      // TODO: Implement delete project
-      showNotification('Delete project feature coming soon!', 'info');
+  const handleDeleteProject = async () => {
+    if (!confirm('Are you sure you want to delete this project? This action cannot be undone and will delete all articles and team data.')) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      // Delete the project document
+      await deleteDoc(doc(db, 'projects', project.id));
+      
+      showNotification('Project deleted successfully', 'success');
+      
+      // Call the callback to refresh the projects list
+      if (onProjectDeleted) {
+        onProjectDeleted();
+      }
+    } catch (error) {
+      console.error('Delete project error:', error);
+      showNotification('Failed to delete project. Please try again.', 'error');
+    } finally {
+      setIsDeleting(false);
+      setShowMenu(false);
     }
   };
 
@@ -59,6 +81,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           <button 
             onClick={() => setShowMenu(!showMenu)}
             className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            disabled={isDeleting}
           >
             <MoreVertical className="w-4 h-4" />
           </button>
@@ -87,14 +110,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
               </button>
               <hr className="border-gray-200" />
               <button
-                onClick={() => {
-                  handleDeleteProject();
-                  setShowMenu(false);
-                }}
-                className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                onClick={handleDeleteProject}
+                disabled={isDeleting}
+                className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Trash2 className="w-4 h-4" />
-                <span>Delete Project</span>
+                <span>{isDeleting ? 'Deleting...' : 'Delete Project'}</span>
               </button>
             </div>
           )}
@@ -118,13 +139,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
         <button
           onClick={handleOpenProject}
-          className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 text-sm"
+          disabled={isDeleting}
+          className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Open Project
         </button>
         <button 
           onClick={handleManageTeam}
-          className="sm:w-auto w-full p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors flex items-center justify-center"
+          disabled={isDeleting}
+          className="sm:w-auto w-full p-2 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
           title="Manage Team"
         >
           <Users className="w-4 h-4" />

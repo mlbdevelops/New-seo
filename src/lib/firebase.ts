@@ -394,6 +394,15 @@ export const inviteTeamMember = async (projectId: string, email: string, role: '
     const user = getCurrentUser();
     if (!user) throw new Error('User not authenticated');
 
+    // Check if user is already a team member
+    const existingMemberQuery = query(
+      collection(db, 'team_members'),
+      where('project_id', '==', projectId),
+      where('user_id', '==', user.uid),
+      where('status', '==', 'active')
+    );
+    const existingMemberSnapshot = await getDocs(existingMemberQuery);
+    
     // Check if invitation already exists
     const existingInviteQuery = query(
       collection(db, 'project_invitations'),
@@ -405,6 +414,28 @@ export const inviteTeamMember = async (projectId: string, email: string, role: '
     
     if (!existingInviteSnapshot.empty) {
       return { error: { message: 'Invitation already sent to this email' } };
+    }
+
+    // Check if user with this email already exists as team member
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('email', '==', email)
+    );
+    const usersSnapshot = await getDocs(usersQuery);
+    
+    if (!usersSnapshot.empty) {
+      const existingUser = usersSnapshot.docs[0];
+      const existingTeamMemberQuery = query(
+        collection(db, 'team_members'),
+        where('project_id', '==', projectId),
+        where('user_id', '==', existingUser.id),
+        where('status', '==', 'active')
+      );
+      const existingTeamMemberSnapshot = await getDocs(existingTeamMemberQuery);
+      
+      if (!existingTeamMemberSnapshot.empty) {
+        return { error: { message: 'User is already a team member' } };
+      }
     }
 
     const invitationData = {

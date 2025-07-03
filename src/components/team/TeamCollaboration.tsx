@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Users, Plus, Mail, Crown, Shield, Edit, Trash2, MessageSquare, Clock, UserX, MoreVertical, Check, X } from 'lucide-react';
+import { ArrowLeft, Users, Plus, Mail, Crown, Shield, Edit, Trash2, MessageSquare, Clock, UserX, MoreVertical, Check, X, Menu } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useNotification } from '../../hooks/useNotification';
 import { 
@@ -24,6 +24,7 @@ const TeamCollaboration: React.FC = () => {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'admin' | 'editor' | 'viewer'>('editor');
   const [isInviting, setIsInviting] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<ProjectInvitation[]>([]);
@@ -91,6 +92,13 @@ const TeamCollaboration: React.FC = () => {
 
     if (!canManageTeam) {
       showNotification('You do not have permission to invite team members', 'error');
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inviteEmail.trim())) {
+      showNotification('Please enter a valid email address', 'error');
       return;
     }
 
@@ -224,9 +232,9 @@ const TeamCollaboration: React.FC = () => {
 
   if (!projectId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Project Selected</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">No Project Selected</h2>
           <p className="text-gray-600 mb-6">Please select a project to manage team collaboration</p>
           <button
             onClick={handleBack}
@@ -253,29 +261,71 @@ const TeamCollaboration: React.FC = () => {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Team Collaboration</h1>
-                <p className="text-sm text-gray-600">Manage your team and project access</p>
+                <h1 className="text-base sm:text-lg font-semibold text-gray-900">Team Collaboration</h1>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Manage your team and project access</p>
               </div>
             </div>
             
+            {/* Desktop Invite Button */}
             {canManageTeam && (
-              <button
-                onClick={() => setShowInviteModal(true)}
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Invite Member</span>
-              </button>
+              <div className="hidden sm:block">
+                <button
+                  onClick={() => setShowInviteModal(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Invite Member</span>
+                </button>
+              </div>
             )}
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setShowMobileMenu(true)}
+              className="sm:hidden p-2 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Mobile Menu */}
+      {showMobileMenu && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 sm:hidden">
+          <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Menu</h3>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4">
+              {canManageTeam && (
+                <button
+                  onClick={() => {
+                    setShowInviteModal(true);
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium flex items-center justify-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Invite Member</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 sm:mb-8">
+          <div className="border-b border-gray-200 overflow-x-auto">
+            <nav className="flex space-x-4 sm:space-x-8 px-4 sm:px-6 min-w-max">
               {[
                 { id: 'members', label: 'Team Members', icon: Users, count: teamMembers.length },
                 { id: 'invitations', label: 'Pending Invitations', icon: Mail, count: invitations.length },
@@ -286,14 +336,15 @@ const TeamCollaboration: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'border-purple-500 text-purple-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
                     <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                     {tab.count !== undefined && (
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         activeTab === tab.id ? 'bg-purple-100 text-purple-600' : 'bg-gray-100 text-gray-600'
@@ -307,7 +358,7 @@ const TeamCollaboration: React.FC = () => {
             </nav>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {loading ? (
               <div className="flex justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
@@ -317,8 +368,17 @@ const TeamCollaboration: React.FC = () => {
                 {/* Team Members Tab */}
                 {activeTab === 'members' && (
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
                       <h3 className="text-lg font-semibold text-gray-900">Team Members ({teamMembers.length})</h3>
+                      {canManageTeam && (
+                        <button
+                          onClick={() => setShowInviteModal(true)}
+                          className="sm:hidden w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium flex items-center justify-center space-x-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Invite Member</span>
+                        </button>
+                      )}
                     </div>
                     
                     {teamMembers.length === 0 ? (
@@ -330,14 +390,14 @@ const TeamCollaboration: React.FC = () => {
                     ) : (
                       <div className="space-y-4">
                         {teamMembers.map((member) => (
-                          <div key={member.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                          <div key={member.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg space-y-4 sm:space-y-0">
                             <div className="flex items-center space-x-4">
-                              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
                                 {(member.user?.full_name || member.user?.email || 'U')[0].toUpperCase()}
                               </div>
-                              <div>
+                              <div className="min-w-0 flex-1">
                                 <div className="flex items-center space-x-2">
-                                  <h4 className="font-medium text-gray-900">
+                                  <h4 className="font-medium text-gray-900 truncate">
                                     {member.user?.full_name || member.user?.email}
                                   </h4>
                                   {getRoleIcon(member.role)}
@@ -345,11 +405,11 @@ const TeamCollaboration: React.FC = () => {
                                     <span className="text-xs text-purple-600 font-medium">(You)</span>
                                   )}
                                 </div>
-                                <p className="text-sm text-gray-600">{member.user?.email}</p>
+                                <p className="text-sm text-gray-600 truncate">{member.user?.email}</p>
                               </div>
                             </div>
                             
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center justify-between sm:justify-end space-x-3">
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
                                 {member.role}
                               </span>
@@ -395,15 +455,15 @@ const TeamCollaboration: React.FC = () => {
                     ) : (
                       <div className="space-y-4">
                         {invitations.map((invitation) => (
-                          <div key={invitation.id} className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <div>
-                              <h4 className="font-medium text-gray-900">{invitation.email}</h4>
+                          <div key={invitation.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg space-y-4 sm:space-y-0">
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-medium text-gray-900 truncate">{invitation.email}</h4>
                               <p className="text-sm text-gray-600">
                                 Invited as {invitation.role} • Expires {invitation.expires_at.toLocaleDateString()}
                               </p>
                             </div>
                             
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center justify-between sm:justify-end space-x-2">
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(invitation.role)}`}>
                                 {invitation.role}
                               </span>
@@ -442,7 +502,7 @@ const TeamCollaboration: React.FC = () => {
                               <Clock className="w-4 h-4 text-purple-600" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm text-gray-900">
+                              <p className="text-sm text-gray-900 break-words">
                                 {formatActivityAction(activity)}
                               </p>
                               <p className="text-xs text-gray-500 mt-1">

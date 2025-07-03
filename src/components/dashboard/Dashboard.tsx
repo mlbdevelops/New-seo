@@ -26,6 +26,11 @@ const Dashboard: React.FC = () => {
     window.location.hash = `#/${path}`;
   };
 
+  const handleProjectDeleted = () => {
+    // Refresh the projects list when a project is deleted
+    fetchProjects();
+  };
+
   const stats = [
     {
       title: 'Total Projects',
@@ -198,7 +203,11 @@ const Dashboard: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {projects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
+                  <ProjectCard 
+                    key={project.id} 
+                    project={project} 
+                    onProjectDeleted={handleProjectDeleted}
+                  />
                 ))}
               </div>
             )}
