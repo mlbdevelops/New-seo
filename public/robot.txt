@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://seoforge.vercel.app/sitemap.xml
